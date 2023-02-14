@@ -169,7 +169,7 @@ class SearxSearchWrapper(BaseModel):
 
     """
 
-    _result: SearxResults = PrivateAttr()
+    _results: SearxResults = PrivateAttr()
     searx_host: str = ""
     unsecure: bool = False
     params: dict = Field(default_factory=_get_default_params)
@@ -233,7 +233,7 @@ class SearxSearchWrapper(BaseModel):
         if not raw_result.ok:
             raise ValueError("Searx API returned an error: ", raw_result.text)
         res = SearxResults(raw_result.text)
-        self._result = res
+        self._results = res
         return res
 
     def run(self, query: str, engines: List[str] = [], **kwargs: Any) -> str:
@@ -319,3 +319,8 @@ class SearxSearchWrapper(BaseModel):
             metadata_results.append(metadata_result)
 
         return metadata_results
+
+    @property
+    def raw_results(self) -> SearxResults:
+        """Cached searx results from the last query in a dict like object."""
+        return self._results
